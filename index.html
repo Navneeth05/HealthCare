@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Information Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <button id="menu-toggle" class="menu-button">☰</button>
+        <nav>
+            <a href="index.html" class="active"><span>🏠</span> Home</a>
+            <a href="diseases.html"><span>🔬</span> Diseases</a>
+            <a href="hospitals.html"><span>🏥</span> Hospitals</a>
+        </nav>
+    </div>
+
+    <main>
+        <div class="hero">
+            <div class="pulse-icon">❤️</div>
+            <h1>Health Information Hub</h1>
+            <p>Your trusted resource for reliable health information about diseases, symptoms, precautions, and nearby medical facilities.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card" onclick="window.location.href='diseases.html'">
+                <h2>Explore Diseases</h2>
+                <p>Discover information about various diseases, their symptoms, and preventive measures.</p>
+            </div>
+            
+            <div class="feature-card" onclick="window.location.href='hospitals.html'">
+                <h2>Find Hospitals</h2>
+                <p>Locate hospitals and medical facilities near you with their specialties and services.</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>How to Use This Resource</h2>
+            <ol>
+                <li><strong>Browse Diseases:</strong> Navigate to the Diseases section to explore various health conditions.</li>
+                <li><strong>Search for Information:</strong> Use the search bar to find specific diseases or symptoms.</li>
+                <li><strong>Find Medical Help:</strong> Check the Hospitals section to locate medical facilities.</li>
+                <li><strong>Stay Informed:</strong> Regularly check for updated information about health conditions.</li>
+            </ol>
+        </div>
+
+        <div class="disclaimer">
+            <h2>Important Disclaimer</h2>
+            <p>The information provided is for educational purposes only and is not a substitute for professional medical advice.</p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

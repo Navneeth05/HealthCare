@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseases - Health Information Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles for disease cards */
+        .diseases-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .disease-card {
+            background: linear-gradient(to right, #e6e9f0 0%, #eef1f5 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .disease-card.active {
+            background: linear-gradient(90deg, hsla(221, 45%, 73%, 1) 0%, hsla(220, 78%, 29%, 1) 100%);
+            color: white;
+        }
+        
+        .disease-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .disease-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: inherit;
+        }
+        
+        .disease-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .disease-card.active .disease-content {
+            max-height: 1000px;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .tag.viral {
+            background-color: #FEC6A1;
+            color: #732200;
+        }
+        
+        .tag.bacterial {
+            background-color: #D3E4FD;
+            color: #003366;
+        }
+        
+        .tag.chronic {
+            background-color: #F2FCE2;
+            color: #2B5900;
+        }
+        
+        .tag.genetic {
+            background-color: #FFDEE2;
+            color: #8B0000;
+        }
+        
+        .tag.sti {
+            background-color: #FEF7CD;
+            color: #6B5900;
+        }
+        
+        .tag.other {
+            background-color: #F1F0FB;
+            color: #32007A;
+        }
+        
+        .tag.mild {
+            background-color: #D6BCFA;
+            color: #4A2980;
+        }
+        
+        .tag.moderate {
+            background-color: #FDE1D3;
+            color: #7A3D00;
+        }
+        
+        .tag.severe {
+            background-color: #FFDEE2;
+            color: #8B0000;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin: 15px 0 5px 0;
+            color: inherit;
+        }
+        
+        ul.symptoms-list, ul.precautions-list {
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+        
+        .search-container {
+            padding: 20px;
+            background: linear-gradient(90deg, hsla(296, 68%, 90%, 1) 0%, hsla(30, 82%, 91%, 1) 100%);
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        #disease-search {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        #disease-search:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #9b87f5;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <button id="menu-toggle" class="menu-button">☰</button>
+        <nav>
+            <a href="index.html"><span>🏠</span> Home</a>
+            <a href="diseases.html" class="active"><span>🔬</span> Diseases</a>
+            <a href="hospitals.html"><span>🏥</span> Hospitals</a>
+        </nav>
+    </div>
+
+    <main>
+        <h1>Diseases & Conditions</h1>
+        <div class="search-container">
+            <input type="text" id="disease-search" placeholder="Search diseases, symptoms, or precautions...">
+        </div>
+        <div id="diseases-list" class="diseases-list">
+            <!-- Diseases will be loaded here dynamically -->
+            <div class="no-results" style="display: none;">No diseases found matching your search.</div>
+        </div>
+    </main>
+
+    <script>
+        // Disease data
+        const diseases = [
+            {
+                id: "chickenpox",
+                name: "Chickenpox",
+                description: "Chickenpox is a highly contagious disease caused by the varicella-zoster virus (VZV). It is characterized by an itchy, blister-like rash that first appears on the chest, back, and face, then spreads over the entire body.",
+                symptoms: [
+                    "Itchy, fluid-filled blisters",
+                    "Fever",
+                    "Fatigue",
+                    "Loss of appetite",
+                    "Headache"
+                ],
+                precautions: [
+                    "Vaccination (best prevention)",
+                    "Avoid contact with infected individuals",
+                    "Maintain good hygiene",
+                    "Keep the infected person isolated until blisters crust over",
+                    "Avoid scratching to prevent scarring and infection"
+                ],
+                category: "viral",
+                severity: "moderate"
+            },
+            {
+                id: "common-cold",
+                name: "Common Cold",
+                description: "The common cold is a viral infection of the nose and throat. It's usually harmless, although it may not feel that way. Many types of viruses can cause a common cold.",
+                symptoms: [
+                    "Runny or stuffy nose",
+                    "Sore throat",
+                    "Cough",
+                    "Congestion",
+                    "Slight body aches or a mild headache",
+                    "Sneezing",
+                    "Low-grade fever"
+                ],
+                precautions: [
+                    "Wash hands thoroughly and frequently",
+                    "Avoid close contact with sick people",
+                    "Cover your mouth and nose when coughing or sneezing",
+                    "Disinfect frequently touched surfaces",
+                    "Stay hydrated and get plenty of rest"
+                ],
+                category: "viral",
+                severity: "mild"
+            },
+            {
+                id: "covid-19",
+                name: "COVID-19",
+                description: "COVID-19 is a contagious disease caused by the SARS-CoV-2 virus. It affects people in different ways. Most infected people develop mild to moderate illness and recover without hospitalization.",
+                symptoms: [
+                    "Fever or chills",
+                    "Cough",
+                    "Shortness of breath",
+                    "Fatigue",
+                    "Muscle or body aches",
+                    "Loss of taste or smell",
+                    "Sore throat"
+                ],
+                precautions: [
+                    "Get vaccinated",
+                    "Wear a mask in public settings",
+                    "Practice social distancing",
+                    "Wash hands frequently",
+                    "Avoid crowded indoor spaces",
+                    "Stay home if you're feeling sick"
+                ],
+                category: "viral",
+                severity: "moderate"
+            },
+            {
+                id: "hiv-aids",
+                name: "HIV/AIDS",
+                description: "HIV (Human Immunodeficiency Virus) attacks the body's immune system. If not treated, it can lead to AIDS (Acquired Immunodeficiency Syndrome), which occurs when the immune system is badly damaged by HIV.",
+                symptoms: [
+                    "Fever",
+                    "Headache",
+                    "Sore throat",
+                    "Swollen lymph glands",
+                    "Rash",
+                    "Fatigue",
+                    "Muscle and joint aches"
+                ],
+                precautions: [
+                    "Practice safe sex by using condoms",
+                    "Never share needles",
+                    "Get tested regularly if you're at risk",
+                    "Take pre-exposure prophylaxis (PrEP) if at high risk",
+                    "If diagnosed, take antiretroviral therapy (ART) as prescribed"
+                ],
+                category: "viral",
+                severity: "severe"
+            },
+            {
+                id: "influenza",
+                name: "Influenza (Flu)",
+                description: "Influenza, commonly known as the flu, is a contagious respiratory illness caused by influenza viruses. It can cause mild to severe illness, and at times can lead to death.",
+                symptoms: [
+                    "Fever or feeling feverish/chills",
+                    "Cough",
+                    "Sore throat",
+                    "Runny or stuffy nose",
+                    "Muscle or body aches",
+                    "Headaches",
+                    "Fatigue"
+                ],
+                precautions: [
+                    "Get a seasonal flu vaccine each year",
+                    "Avoid close contact with sick people",
+                    "Cover your mouth and nose when coughing or sneezing",
+                    "Wash hands frequently",
+                    "Avoid touching your eyes, nose, and mouth"
+                ],
+                category: "viral",
+                severity: "moderate"
+            },
+            {
+                id: "measles",
+                name: "Measles",
+                description: "Measles is a highly contagious viral disease. It remains a significant cause of death among young children globally, despite the availability of a safe and effective vaccine.",
+                symptoms: [
+                    "High fever",
+                    "Cough",
+                    "Runny nose",
+                    "Red, watery eyes",
+                    "Tiny white spots inside the mouth",
+                    "Rash consisting of flat red spots"
+                ],
+                precautions: [
+                    "Vaccination (MMR vaccine)",
+                    "Avoid contact with infected individuals",
+                    "Maintain good hygiene",
+                    "Boost vitamin A intake",
+                    "Ensure ventilation in living spaces"
+                ],
+                category: "viral",
+                severity: "severe"
+            },
+            {
+                id: "meningitis",
+                name: "Meningitis",
+                description: "Meningitis is an inflammation of the membranes (meninges) surrounding the brain and spinal cord. It can be caused by bacteria, viruses, fungi, or parasites.",
+                symptoms: [
+                    "Sudden high fever",
+                    "Stiff neck",
+                    "Severe headache",
+                    "Nausea or vomiting",
+                    "Confusion or difficulty concentrating",
+                    "Seizures",
+                    "Sensitivity to light"
+                ],
+                precautions: [
+                    "Get vaccinated against bacterial meningitis",
+                    "Practice good hygiene",
+                    "Avoid sharing personal items",
+                    "Strengthen your immune system",
+                    "Seek immediate medical attention if symptoms occur"
+                ],
+                category: "bacterial",
+                severity: "severe"
+            },
+            {
+                id: "monkeypox",
+                name: "Monkeypox",
+                description: "Monkeypox is a viral zoonotic disease with symptoms similar to those seen in smallpox patients, although it is clinically less severe. It is transmitted to humans through close contact with an infected person or animal.",
+                symptoms: [
+                    "Fever",
+                    "Headache",
+                    "Muscle aches",
+                    "Back pain",
+                    "Swollen lymph nodes",
+                    "Chills",
+                    "Exhaustion",
+                    "Distinctive rash with lesions"
+                ],
+                precautions: [
+                    "Avoid contact with animals that could harbor the virus",
+                    "Avoid contact with any materials that have been in contact with a sick animal or person",
+                    "Isolate infected patients from others",
+                    "Practice good hand hygiene",
+                    "Use personal protective equipment when caring for patients"
+                ],
+                category: "viral",
+                severity: "moderate"
+            },
+            {
+                id: "mononucleosis",
+                name: "Mononucleosis",
+                description: "Mononucleosis (mono) is a contagious infection most commonly caused by the Epstein-Barr virus. It's often called the 'kissing disease' because it spreads through saliva.",
+                symptoms: [
+                    "Fatigue",
+                    "Sore throat",
+                    "Fever",
+                    "Swollen lymph nodes",
+                    "Swollen tonsils",
+                    "Headache",
+                    "Skin rash",
+                    "Soft, swollen spleen"
+                ],
+                precautions: [
+                    "Avoid kissing or sharing utensils with infected individuals",
+                    "Practice good hygiene",
+                    "Don't share personal items",
+                    "Rest to aid recovery if infected",
+                    "Avoid contact sports to prevent rupturing the spleen if infected"
+                ],
+                category: "viral",
+                severity: "moderate"
+            },
+            {
+                id: "sti",
+                name: "Sexually Transmitted Infections",
+                description: "Sexually transmitted infections (STIs) are infections that are passed from one person to another through sexual contact. Many STIs initially cause no symptoms, which is why regular testing is important.",
+                symptoms: [
+                    "Unusual discharge from penis or vagina",
+                    "Pain during urination or intercourse",
+                    "Sores, bumps, or rashes on genitals or surrounding areas",
+                    "Unusual vaginal bleeding",
+                    "Swollen lymph nodes, particularly in the groin",
+                    "Lower abdominal pain",
+                    "Fever"
+                ],
+                precautions: [
+                    "Practice safe sex by using condoms",
+                    "Limit number of sexual partners",
+                    "Get regular STI screenings",
+                    "Communicate openly with partners about sexual health",
+                    "Avoid sexual activity if you or your partner has symptoms",
+                    "Get vaccinated for preventable STIs (like HPV and Hepatitis B)"
+                ],
+                category: "sti",
+                severity: "moderate"
+            }
+        ];
+
+        // Function to render disease cards
+        function renderDiseases(diseasesToRender) {
+            const diseasesList = document.getElementById('diseases-list');
+            const noResults = document.querySelector('.no-results');
+            
+            // Clear previous content except for no-results div
+            Array.from(diseasesList.children).forEach(child => {
+                if (!child.classList.contains('no-results')) {
+                    diseasesList.removeChild(child);
+                }
+            });
+            
+            if (diseasesToRender.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            } else {
+                noResults.style.display = 'none';
+            }
+
+            diseasesToRender.forEach(disease => {
+                const card = document.createElement('div');
+                card.className = 'disease-card';
+                card.dataset.id = disease.id;
+                
+                const header = document.createElement('div');
+                header.className = 'disease-header';
+                
+                const title = document.createElement('h2');
+                title.textContent = disease.name;
+                header.appendChild(title);
+                
+                card.appendChild(header);
+                
+                const content = document.createElement('div');
+                content.className = 'disease-content';
+                
+                // Tags section
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'tags';
+                
+                const categoryTag = document.createElement('span');
+                categoryTag.className = `tag ${disease.category}`;
+                categoryTag.textContent = disease.category.charAt(0).toUpperCase() + disease.category.slice(1);
+                tagsDiv.appendChild(categoryTag);
+                
+                const severityTag = document.createElement('span');
+                severityTag.className = `tag ${disease.severity}`;
+                severityTag.textContent = disease.severity.charAt(0).toUpperCase() + disease.severity.slice(1);
+                tagsDiv.appendChild(severityTag);
+                
+                content.appendChild(tagsDiv);
+                
+                // Description
+                const description = document.createElement('p');
+                description.textContent = disease.description;
+                content.appendChild(description);
+                
+                // Symptoms
+                const symptomsTitle = document.createElement('h3');
+                symptomsTitle.className = 'section-title';
+                symptomsTitle.textContent = 'Symptoms';
+                content.appendChild(symptomsTitle);
+                
+                const symptomsList = document.createElement('ul');
+                symptomsList.className = 'symptoms-list';
+                disease.symptoms.forEach(symptom => {
+                    const item = document.createElement('li');
+                    item.textContent = symptom;
+                    symptomsList.appendChild(item);
+                });
+                content.appendChild(symptomsList);
+                
+                // Precautions
+                const precautionsTitle = document.createElement('h3');
+                precautionsTitle.className = 'section-title';
+                precautionsTitle.textContent = 'Precautions';
+                content.appendChild(precautionsTitle);
+                
+                const precautionsList = document.createElement('ul');
+                precautionsList.className = 'precautions-list';
+                disease.precautions.forEach(precaution => {
+                    const item = document.createElement('li');
+                    item.textContent = precaution;
+                    precautionsList.appendChild(item);
+                });
+                content.appendChild(precautionsList);
+                
+                card.appendChild(content);
+                
+                // Add click event to toggle expansion
+                card.addEventListener('click', function() {
+                    // Close all other cards
+                    document.querySelectorAll('.disease-card.active').forEach(activeCard => {
+                        if (activeCard !== this) {
+                            activeCard.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current card
+                    this.classList.toggle('active');
+                });
+                
+                diseasesList.appendChild(card);
+            });
+        }
+
+        // Filter diseases based on search term
+        function filterDiseases(searchTerm) {
+            if (!searchTerm) return diseases;
+            
+            const term = searchTerm.toLowerCase();
+            return diseases.filter(disease => 
+                disease.name.toLowerCase().includes(term) ||
+                disease.description.toLowerCase().includes(term) ||
+                disease.symptoms.some(symptom => symptom.toLowerCase().includes(term)) ||
+                disease.precautions.some(precaution => precaution.toLowerCase().includes(term))
+            );
+        }
+
+        // Initialize disease list and search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDiseases(diseases);
+            
+            const searchInput = document.getElementById('disease-search');
+            searchInput.addEventListener('input', function() {
+                const filteredDiseases = filterDiseases(this.value);
+                renderDiseases(filteredDiseases);
+            });
+            
+            // Mobile menu toggle
+            const menuButton = document.getElementById('menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (menuButton && sidebar) {
+                menuButton.addEventListener('click', () => {
+                    sidebar.classList.toggle('expanded');
+                });
+            }
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (sidebar && !sidebar.contains(e.target) && sidebar.classList.contains('expanded')) {
+                    sidebar.classList.remove('expanded');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

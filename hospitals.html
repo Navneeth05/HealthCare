@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospitals - Health Information Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <button id="menu-toggle" class="menu-button">☰</button>
+        <nav>
+            <a href="index.html"><span>🏠</span> Home</a>
+            <a href="diseases.html"><span>🔬</span> Diseases</a>
+            <a href="hospitals.html" class="active"><span>🏥</span> Hospitals</a>
+        </nav>
+    </div>
+
+    <main>
+        <h1>Hospitals Directory</h1>
+        <div class="search-container">
+            <input type="text" id="hospital-search" placeholder="Search hospitals by name, location, or specialty...">
+        </div>
+        <div id="hospitals-list" class="hospitals-list">
+            <!-- Hospitals will be loaded here dynamically -->
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
